@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iPhone Connect — Verbind wat telt</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; background: #000; color: #f5f5f7; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 0.5px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 44px;
+  }
+  nav .logo { font-size: 20px; color: #f5f5f7; }
+  nav .nav-links { display: flex; gap: 1.5rem; }
+  nav .nav-links a { font-size: 13px; color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
+  nav .nav-links a:hover { color: #f5f5f7; }
+  nav .nav-cta { font-size: 13px; color: #2997ff; text-decoration: none; }
+
+  .hero {
+    text-align: center;
+    padding: 7rem 2rem 5rem;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0,100,255,0.12) 0%, transparent 70%);
+    max-width: 980px; margin: 0 auto;
+  }
+  .hero .eyebrow { font-size: 17px; color: #2997ff; font-weight: 400; letter-spacing: 0.01em; margin-bottom: 1rem; }
+  .hero h1 { font-size: clamp(52px, 8vw, 96px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; background: linear-gradient(180deg, #f5f5f7 60%, rgba(245,245,247,0.4)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
+  .hero .tagline { font-size: clamp(22px, 3vw, 32px); font-weight: 300; color: rgba(245,245,247,0.7); margin-bottom: 1.5rem; }
+  .hero .price { font-size: 19px; color: rgba(245,245,247,0.55); margin-bottom: 2.5rem; }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: #2997ff; color: #fff; padding: 14px 28px; border-radius: 980px; font-size: 17px; text-decoration: none; font-weight: 400; transition: background 0.2s; }
+  .btn-primary:hover { background: #147ce5; }
+  .btn-ghost { border: 1px solid rgba(255,255,255,0.25); color: #f5f5f7; padding: 14px 28px; border-radius: 980px; font-size: 17px; text-decoration: none; font-weight: 400; transition: all 0.2s; }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.5); }
+
+  .phone-visual { display: flex; justify-content: center; margin: 3rem 0; }
+  .phone-frame {
+    width: 220px; height: 440px; border-radius: 44px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: linear-gradient(160deg, #1c1c1e 0%, #2c2c2e 100%);
+    box-shadow: 0 60px 120px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.08);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .phone-notch { width: 100px; height: 26px; background: #000; border-radius: 0 0 16px 16px; margin: 0 auto; }
+  .phone-screen { flex: 1; padding: 0.6rem 0.5rem; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+  .phone-time { text-align: center; font-size: 36px; font-weight: 200; color: #f5f5f7; margin-top: 0.25rem; line-height: 1; }
+  .phone-date { text-align: center; font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem; }
+  .phone-icons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; padding: 0 2px; }
+  .app-icon { border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 4px 8px; aspect-ratio: 1; }
+  .app-icon .icon-emoji { font-size: 28px; line-height: 1; }
+  .app-icon .icon-label { font-size: 10px; font-weight: 500; color: #fff; text-align: center; letter-spacing: 0.01em; }
+  .phone-bottom { height: 4px; width: 80px; background: rgba(255,255,255,0.3); border-radius: 2px; margin: 8px auto; }
+
+  .divider-line { height: 0.5px; background: rgba(255,255,255,0.08); margin: 0; }
+
+  section { padding: 6rem 2rem; max-width: 980px; margin: 0 auto; }
+  .section-label { font-size: 13px; font-weight: 500; color: #2997ff; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1rem; text-align: center; }
+  .section-headline { font-size: clamp(32px, 5vw, 56px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; text-align: center; margin-bottom: 1rem; }
+  .section-sub { font-size: 19px; color: rgba(245,245,247,0.6); text-align: center; max-width: 600px; margin: 0 auto 3rem; font-weight: 300; line-height: 1.5; }
+
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5px; background: rgba(255,255,255,0.08); border-radius: 18px; overflow: hidden; }
+  .feature-card { background: #1c1c1e; padding: 2.5rem 2rem; transition: background 0.3s; }
+  .feature-card:hover { background: #2c2c2e; }
+  .feature-icon { font-size: 36px; margin-bottom: 1rem; }
+  .feature-card h3 { font-size: 19px; font-weight: 600; color: #f5f5f7; margin-bottom: 0.5rem; }
+  .feature-card p { font-size: 15px; color: rgba(245,245,247,0.55); line-height: 1.6; }
+
+  .specs-section { background: #0a0a0a; border-top: 0.5px solid rgba(255,255,255,0.08); border-bottom: 0.5px solid rgba(255,255,255,0.08); }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 3rem; }
+  .spec-item { text-align: center; }
+  .spec-number { font-size: 48px; font-weight: 700; color: #f5f5f7; letter-spacing: -0.03em; }
+  .spec-number span { font-size: 24px; font-weight: 300; }
+  .spec-label { font-size: 14px; color: rgba(245,245,247,0.5); margin-top: 0.25rem; }
+
+  .colors-section { text-align: center; }
+  .color-swatches { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin: 2rem 0; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; cursor: pointer; }
+  .swatch-circle { width: 48px; height: 48px; border-radius: 50%; border: 2px solid transparent; transition: all 0.2s; }
+  .swatch:hover .swatch-circle { transform: scale(1.1); }
+  .swatch.active .swatch-circle { border-color: #f5f5f7; }
+  .swatch-name { font-size: 12px; color: rgba(245,245,247,0.5); }
+
+  .bundle-section { background: #1c1c1e; border-radius: 28px; padding: 4rem 3rem; text-align: center; }
+  .bundle-items { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin: 2rem 0; }
+  .bundle-item { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+  .bundle-icon-wrap { width: 72px; height: 72px; border-radius: 18px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 32px; }
+  .bundle-item p { font-size: 13px; color: rgba(245,245,247,0.5); }
+  .bundle-price { font-size: 42px; font-weight: 700; color: #f5f5f7; margin-top: 2rem; }
+  .bundle-price-note { font-size: 17px; color: rgba(245,245,247,0.45); margin-top: 0.5rem; font-weight: 300; }
+
+  .testimonial-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+  .testimonial { background: #1c1c1e; border-radius: 18px; padding: 2rem; }
+  .stars { color: #ff9f0a; font-size: 14px; margin-bottom: 1rem; letter-spacing: 2px; }
+  .testimonial p { font-size: 15px; color: rgba(245,245,247,0.7); line-height: 1.6; font-style: italic; margin-bottom: 1rem; }
+  .testimonial .author { font-size: 13px; color: rgba(245,245,247,0.4); }
+
+  .cta-section { text-align: center; background: radial-gradient(ellipse at 50% 100%, rgba(0,100,255,0.15) 0%, transparent 70%); padding: 7rem 2rem; max-width: 100%; }
+  .cta-section h2 { font-size: clamp(36px, 5vw, 64px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 1rem; }
+  .cta-section p { font-size: 19px; color: rgba(245,245,247,0.6); margin-bottom: 2.5rem; font-weight: 300; }
+
+  footer { border-top: 0.5px solid rgba(255,255,255,0.1); padding: 3rem 2rem; max-width: 980px; margin: 0 auto; }
+  .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 2rem; margin-bottom: 2rem; }
+  .footer-col h4 { font-size: 13px; font-weight: 500; color: rgba(245,245,247,0.9); margin-bottom: 1rem; }
+  .footer-col a { display: block; font-size: 13px; color: rgba(245,245,247,0.4); text-decoration: none; margin-bottom: 0.5rem; transition: color 0.2s; }
+  .footer-col a:hover { color: rgba(245,245,247,0.8); }
+  .footer-bottom { font-size: 12px; color: rgba(245,245,247,0.3); padding-top: 1.5rem; border-top: 0.5px solid rgba(255,255,255,0.08); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-up   { animation: fadeUp 0.8s ease both; }
+  .fade-up-2 { animation: fadeUp 0.8s 0.15s ease both; }
+  .fade-up-3 { animation: fadeUp 0.8s 0.3s ease both; }
+</style>
+</head>
+<body>
+
+  <nav>
+    <span class="logo">&#63743;</span>
+    <div class="nav-links">
+      <a href="#">iPhone Connect</a>
+      <a href="#">Features</a>
+      <a href="#">Bundel</a>
+      <a href="#">Kleuren</a>
+    </div>
+    <a href="#" class="nav-cta">Koop nu</a>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero fade-up">
+    <p class="eyebrow">Nieuw</p>
+    <h1>iPhone Connect</h1>
+    <p class="tagline">Verbind wat telt.</p>
+    <p class="price">Vanaf €649 — all-in bundel</p>
+    <div class="hero-btns">
+      <a href="#" class="btn-primary">Koop nu</a>
+      <a href="#" class="btn-ghost">Meer info</a>
+    </div>
+  </div>
+
+  <!-- PHONE VISUAL -->
+  <div class="phone-visual fade-up-2">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="phone-time">14:32</div>
+        <div class="phone-date">Zondag 25 mei</div>
+        <div class="phone-icons">
+          <div class="app-icon" style="background:#34c759">
+            <span class="icon-emoji">📞</span>
+            <span class="icon-label">Bellen</span>
+          </div>
+          <div class="app-icon" style="background:#636366">
+            <span class="icon-emoji">📷</span>
+            <span class="icon-label">Camera</span>
+          </div>
+          <div class="app-icon" style="background:#1c1c1e; border:1px solid rgba(255,255,255,0.15)">
+            <span class="icon-emoji">🔍</span>
+            <span class="icon-label">Vergrootglas</span>
+          </div>
+          <div class="app-icon" style="background:#34c759">
+            <span class="icon-emoji">💬</span>
+            <span class="icon-label">Berichten</span>
+          </div>
+          <div class="app-icon" style="background:#fc3c44">
+            <span class="icon-emoji">🎵</span>
+            <span class="icon-label">Muziek</span>
+          </div>
+          <div class="app-icon" style="background:linear-gradient(135deg,#fa233b,#fb5c74,#fc7b3f,#fbd139,#6bda45,#26c9f7,#3478f6,#8e4ec6)">
+            <span class="icon-emoji">🖼</span>
+            <span class="icon-label">Foto's</span>
+          </div>
+        </div>
+      </div>
+      <div class="phone-bottom"></div>
+    </div>
+  </div>
+
+  <div class="divider-line"></div>
+
+  <!-- FEATURES -->
+  <section>
+    <p class="section-label">Ontworpen voor jou</p>
+    <h2 class="section-headline">Technologie die<br>eindelijk bij je past.</h2>
+    <p class="section-sub">Niet de telefoon was te moeilijk. De telefoon was gewoon niet voor jou gemaakt. Tot nu.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🖐</div>
+        <h3>Eenvoudige interface</h3>
+        <p>Grote iconen, duidelijke tekst en een vereenvoudigd startscherm. Geen rommel, geen verwarring — enkel wat je nodig hebt.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡</div>
+        <h3>Stevige constructie</h3>
+        <p>Versterkt aluminium frame met duurzaam gehard glas. Bestand tegen de val die altijd onverwacht komt.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🆘</div>
+        <h3>Noodknop</h3>
+        <p>Één druk op de zijknop en je familie of hulpdiensten worden automatisch gewaarschuwd. Altijd beschermd.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔊</div>
+        <h3>Extra luide speaker</h3>
+        <p>Gesprekken helder en luid — ook in lawaaierige omgevingen. Nooit meer "wat zeg je?" tijdens een FaceTime-gesprek.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌿</div>
+        <h3>Duurzame materialen</h3>
+        <p>Gemaakt met gerecycleerd aluminium en verantwoord geproduceerde onderdelen. Goed voor jou, goed voor de planeet.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔋</div>
+        <h3>Batterij voor de hele dag</h3>
+        <p>Tot 26 uur gesprekstijd. Eén keer opladen 's nachts, en je bent de volgende dag volledig gedekt.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📸</div>
+        <h3>Eén-tik camera</h3>
+        <p>Open de camera, druk op de grote knop. Scherpe foto's van kleinkinderen zonder gedoe met instellingen.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎙</div>
+        <h3>Siri, gewoon vragen</h3>
+        <p>"Bel Sara" — en Siri doet de rest. Geen typen, geen zoeken. Gewoon praten zoals je gewend bent.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💊</div>
+        <h3>Medicatieherinnering</h3>
+        <p>Stel in wanneer je medicatie neemt. De iPhone Connect herinnert je elke dag op het juiste moment.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-line"></div>
+
+  <!-- SPECS -->
+  <div class="specs-section">
+    <section>
+      <p class="section-label" style="text-align:center">De cijfers</p>
+      <div class="specs-grid">
+        <div class="spec-item">
+          <div class="spec-number">26<span>u</span></div>
+          <div class="spec-label">Batterijduur</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-number">6.1<span>"</span></div>
+          <div class="spec-label">Super Retina scherm</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-number">2<span>jr</span></div>
+          <div class="spec-label">Uitgebreide garantie</div>
+        </div>
+        <div class="spec-item">
+          <div class="spec-number">48<span>MP</span></div>
+          <div class="spec-label">Hoofdcamera</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="divider-line"></div>
+
+  <!-- KLEUREN -->
+  <section class="colors-section">
+    <p class="section-label">Kleuren</p>
+    <h2 class="section-headline">Vier tinten.<br>Eén keuze.</h2>
+    <div class="color-swatches">
+      <div class="swatch active" onclick="selectColor(this,'Middernacht')">
+        <div class="swatch-circle" style="background:#1c1c2e; border-color:rgba(255,255,255,0.3);"></div>
+        <span class="swatch-name">Middernacht</span>
+      </div>
+      <div class="swatch" onclick="selectColor(this,'Zilver')">
+        <div class="swatch-circle" style="background:linear-gradient(135deg,#e8e8ed,#c7c7cc);"></div>
+        <span class="swatch-name">Zilver</span>
+      </div>
+      <div class="swatch" onclick="selectColor(this,'Sterrenlicht')">
+        <div class="swatch-circle" style="background:linear-gradient(135deg,#f0ebe0,#d4c9b0);"></div>
+        <span class="swatch-name">Sterrenlicht</span>
+      </div>
+      <div class="swatch" onclick="selectColor(this,'Dennenbos')">
+        <div class="swatch-circle" style="background:linear-gradient(135deg,#3a5a44,#2d4435);"></div>
+        <span class="swatch-name">Dennenbos</span>
+      </div>
+    </div>
+    <p id="color-label" style="font-size:17px; color:rgba(245,245,247,0.5);">Geselecteerd: Middernacht</p>
+  </section>
+
+  <div class="divider-line"></div>
+
+  <!-- BUNDEL -->
+  <section>
+    <div class="bundle-section">
+      <p class="section-label">Alles inbegrepen</p>
+      <h2 class="section-headline" style="font-size:clamp(28px,4vw,48px)">De complete bundel.<br>Niets vergeten.</h2>
+      <div class="bundle-items">
+        <div class="bundle-item">
+          <div class="bundle-icon-wrap">📱</div>
+          <p>iPhone Connect</p>
+        </div>
+        <div class="bundle-item">
+          <div class="bundle-icon-wrap">🛡</div>
+          <p>Robuust hoesje</p>
+        </div>
+        <div class="bundle-item">
+          <div class="bundle-icon-wrap">🔲</div>
+          <p>Screenprotector</p>
+        </div>
+        <div class="bundle-item">
+          <div class="bundle-icon-wrap">🤝</div>
+          <p>Gratis setup</p>
+        </div>
+        <div class="bundle-item">
+          <div class="bundle-icon-wrap">📞</div>
+          <p>Senior helpdesk</p>
+        </div>
+      </div>
+      <div class="bundle-price">€649</div>
+      <p class="bundle-price-note">All-in. Inclusief 2 jaar garantie.</p>
+    </div>
+  </section>
+
+  <div class="divider-line"></div>
+
+  <!-- TESTIMONIALS -->
+  <section>
+    <p class="section-label">Ervaringen</p>
+    <h2 class="section-headline">Wat mensen zeggen.</h2>
+    <div class="testimonial-strip" style="margin-top:2.5rem">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"Ik dacht dat ik nooit een smartphone zou kunnen gebruiken. Nu FaceTime ik elke dag met mijn kleindochters. De grote knoppen maken echt het verschil."</p>
+        <span class="author">— Marianne, 71 jaar, Gent</span>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"Mijn vader belde me na één week om te zeggen dat hij zijn medicatie-herinnering niet meer wil missen. Dat zegt genoeg."</p>
+        <span class="author">— Thomas, 48 jaar, Leuven</span>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"De medewerker in de winkel heeft alles voor mij ingesteld. Ik ben naar huis gegaan en kon meteen bellen. Voor het eerst voel ik me niet verloren met technologie."</p>
+        <span class="author">— Jef, 78 jaar, Antwerpen</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider-line"></div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h2>iPhone Connect.</h2>
+    <p>Verbind wat telt. Vanaf €649, all-in.</p>
+    <div class="hero-btns" style="justify-content:center">
+      <a href="#" class="btn-primary">Koop nu</a>
+      <a href="#" class="btn-ghost">Vind een winkel</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>iPhone Connect</h4>
+        <a href="#">Overzicht</a>
+        <a href="#">Features</a>
+        <a href="#">Technische specs</a>
+        <a href="#">Vergelijken</a>
+      </div>
+      <div class="footer-col">
+        <h4>Bundel</h4>
+        <a href="#">Wat is inbegrepen</a>
+        <a href="#">Gratis setup</a>
+        <a href="#">Senior helpdesk</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="#">Apple Support</a>
+        <a href="#">Senior helpdesk</a>
+        <a href="#">Winkel vinden</a>
+        <a href="#">Garantie</a>
+      </div>
+      <div class="footer-col">
+        <h4>Apple</h4>
+        <a href="#">Over Apple</a>
+        <a href="#">Privacy</a>
+        <a href="#">Nieuwsbrief</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>Copyright © 2025 Apple Inc. Alle rechten voorbehouden. | Privacybeleid | Gebruiksvoorwaarden</p>
+      <p style="margin-top:0.5rem; font-size:11px; color:rgba(245,245,247,0.2);">Prijzen inclusief btw. Gratis setup uitsluitend beschikbaar in deelnemende Apple Stores en partnerwinkels in België en Nederland.</p>
+    </div>
+  </footer>
+
+  <script>
+    function selectColor(el, name) {
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('color-label').textContent = 'Geselecteerd: ' + name;
+    }
+  </script>
+
+</body>
+</html>
